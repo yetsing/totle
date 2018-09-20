@@ -1,0 +1,47 @@
+{% extends "topic/base.html" %}
+{% block title %}消息{% endblock%}
+
+{% block content %}
+<div id="content">
+
+    <div id="id-board" class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="{{ url_for('topic.index') }}">主页</a><span class="divider">/</span></li>
+                <li class="active">添加板块</li>
+            </ul>
+        </div>
+        <div class="inner">
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-success">
+                <strong>{{ message }}</strong>
+            </div>
+            {% endfor %}
+            <form class="form-horizontal" action="{{ url_for('board.add') }}" method="post">
+                <div class="controls">
+                    <input class="input-xlarge readonly" id="title" type="text" name="title" placeholder="请输入板块名称">
+                </div>
+                <div class="form-actions">
+                    <input type="submit" class="span-primary submit_btn" value="添加">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="id-now-board" class="panel">
+        <div class="header">
+            <span class="col_fade">现有板块</span>
+        </div>
+        <div class="inner">
+            {% if not boards %}
+            <p>无</p>
+            {% endif %}
+            {% for b in boards %}
+            <section class="message" data-id="${s.id}">
+                <a href="{{ url_for('topic.index', board_id=b.id) }}">{{ b.title }}</a>
+            </section>
+            <h1 class="content-subhead update-form"> </h1>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

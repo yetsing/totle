@@ -1,0 +1,73 @@
+<!--topic/index.html-->
+{% extends "topic/base.html" %}
+{% block title %}论坛主页{% endblock%}
+
+{% block content %}
+<div id="content">
+    <div class="panel">
+        <div class="header">
+            {% if bid == -1 %}
+            <a href="/topic"
+               class="topic-tab current-tab">
+                全部的帖子
+            </a>
+            {% else %}
+            <a href="/topic"
+               class="topic-tab">
+                全部的帖子
+            </a>
+            {% endif %}
+
+
+            {% for b in bs %}
+            {% if b.id == bid %}
+            <a href="/topic?board_id={{ b.id }}"
+               class="topic-tab current-tab">
+                {{ b.title }}
+            </a>
+            {% else %}
+            <a href="/topic?board_id={{ b.id }}"
+               class="topic-tab">
+                {{ b.title }}
+            </a>
+            {% endif %}
+            {% endfor %}
+            {% if user.role == 'admin' %}
+            <a href="{{ url_for('board.index') }}" style="
+                    font-size: medium;
+                    border: 1px solid #08c;
+                    padding: 0px 4px 2px 4px;
+                    border-radius: 3px;
+                ">+</a>
+            {% endif %}
+        </div>
+        <div class="inner post">
+            <div class="topic_list">
+                {% for t in ms %}
+                {% set user = t.user() %}
+                {% set board = t.board() %}
+                <div class="cell">
+                    <a class="user_avatar pull-left" href="{{ url_for('user.user_detail', username=user.username) }}">
+                        <img src="{{ user.image }}" title="{{ user.username }}">
+                    </a>
+                    <a class="last_time pull-right" href="javascript: void(0)">
+                        <span class="last_active_time">{{ t.active_time | from_now }}</span>
+                    </a>
+                    <div class="topic_title_wrapper">
+
+                        <span class="board" style="color: #80bd01; font-size: smaller; padding-left: 5px;">{{ board.title }}</span>
+                        <span>
+                            <span title="回复数">{{ t.replies() | count }}</span>/<span title="点击数">{{ t.views }}</span>
+                        </span>
+                        <a class="topic_title" href="{{ url_for('topic.detail', topic_id=t.id) }}">
+                            {{ t.title }}
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

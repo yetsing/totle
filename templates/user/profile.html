@@ -1,0 +1,103 @@
+<!--profile.html-->
+{% extends "topic/base.html" %}
+{% block title %}{{ view_user.username }}的个人主页{% endblock%}
+
+{% block content %}
+<div id="content">
+    <div class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="{{ url_for('topic.index') }}">主页</a><span class="divider">/</span></li>
+            </ul>
+        </div>
+        <div class="inner userinfo">
+            <div class="user_big_avatar">
+                <img src="{{ view_user.image }}" class="user_avatar" title="{{ view_user.username }}">
+            </div>
+            <a class="dark">{{ view_user.username }}</a>
+            <div class="user_profile">
+                {% if view_user.collection_count != 0 %}
+                <a class="dark" href="{{ url_for('user.collection_index', username=view_user.username) }}" target="_blank">
+                    <span class="big collect-topic-count">{{ view_user.collection_count }}</span>个话题收藏
+                </a>
+                {% endif %}
+            </div>
+
+            <p class="col_fade">注册时间 {{ view_user.created_time | format_time }}</p>
+
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="header">
+            <span class="col_fade">最近创建的话题</span>
+        </div>
+        {% if not created %}
+        <div class="inner">
+            <p>无话题</p>
+        </div>
+        {% endif %}
+        {% for t in created %}
+        <div class="cell">
+            <a class="user_avatar pull-left" href="{{ url_for('user.user_detail', username=view_user.username) }}">
+                <img src="{{ view_user.image }}" title="{{ view_user.username }}">
+            </a>
+            <a class="last_time pull-right">
+                <span class="last_active_time">{{ t.active_time | from_now }}</span>
+            </a>
+            <div class="topic_title_wrapper">
+                        <span>
+                            <span class="count_of_replies" title="回复数">
+                              {{ t.replies() | count }}
+                            </span>
+                            <span class="count_seperator">/</span>
+                            <span class="count_of_visits" title="点击数">
+                              {{ t.views }}
+                            </span>
+                        </span>
+                <a class="topic_title" href="{{ url_for('topic.detail', topic_id=t.id) }}" title="{{ t.title }}">
+                    {{ t.title }}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="panel">
+        <div class="header">
+            <span class="col_fade">最近参与的话题</span>
+        </div>
+        {% if not replied %}
+        <div class="inner">
+            <p>无话题</p>
+        </div>
+        {% endif %}
+        {% for t in replied %}
+        {% set user = t.user() %}
+        <div class="cell">
+            <a class="user_avatar pull-left" href="{{ url_for('user.user_detail', username=user.username) }}">
+                <img src="{{ user.image }}" title="{{ user.username }}">
+            </a>
+
+            <a class="last_time pull-right" href="{{ url_for('topic.detail', topic_id=t.id) }}">
+                <span class="last_active_time">{{ t.active_time | from_now }}</span>
+            </a>
+            <div class="topic_title_wrapper">
+                        <span>
+                            <span class="count_of_replies" title="回复数">
+                              {{ t.replies() | count }}
+                            </span>
+                            <span class="count_seperator">/</span>
+                            <span class="count_of_visits" title="点击数">
+                              {{ t.views }}
+                            </span>
+                        </span>
+                <a class="topic_title" href="{{ url_for('topic.detail', topic_id=t.id) }}" title="{{ t.title }}">
+                    {{ t.title }}
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

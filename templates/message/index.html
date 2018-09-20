@@ -1,0 +1,123 @@
+{% extends "topic/base.html" %}
+{% block title %}消息{% endblock%}
+{% block head %}
+<style>
+    .content-subhead {
+    text-transform: uppercase;
+    color: #aaa;
+    border-bottom: 1px solid #eee;
+    padding: 0.4em 0;
+    font-size: 80%;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    }
+    .message-content {
+        margin-left: 50px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content">
+
+    <div id="id-message" class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="{{ url_for('topic.index') }}">主页</a><span class="divider">/</span></li>
+                <li class="active">发送消息</li>
+            </ul>
+        </div>
+        <div class="inner">
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-success">
+                <strong>{{ message }}</strong>
+            </div>
+            {% endfor %}
+            <form class="form-horizontal" method="post" action="{{ url_for('.add') }}">
+                <div class="control-group">
+                    <label class="control-label" for="receiver">接收者</label>
+
+                    <div class="controls">
+                        <input class="input-xlarge readonly" id="receiver" type="text" name="receiver" placeholder="请输入接收者用户名">
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label" for="message">内容</label>
+
+                    <div class="controls">
+                        <input class="input-xlarge readonly" id="message" type="text" name="content" placeholder="请输入消息内容">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <input type="submit" class="span-primary submit_btn" value="发送消息">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="id-received-message" class="panel">
+        <div class="header">
+            <span class="col_fade">收到的消息</span>
+        </div>
+        <div class="inner">
+            {% if not received %}
+            <p>没有消息</p>
+            {% endif %}
+            {% for r in received %}
+            <section class="message" data-id="${s.id}">
+                <header class="message-header">
+                    <p class="message-meta">
+                        发送方 ·
+                        <a href="javascript:void(0);" class="message-receiver" style="color: #08c;">{{r.sender}}</a>
+                    </p>
+                </header>
+                <div class="message-description">
+                    <p class="message-content">{{r.content}}</p>
+                    {% if r.link !='' %}
+                    <p class="message-content">链接: <a href="{{ r.link }}">{{ r.link }}</a></p>
+                    {% endif %}
+                </div>
+                <div>
+                    <span>{{r.created_time | format_time }}</span>
+                    <a href="{{ url_for('message.delete', messages_id=r.id, user='receiver_del') }}" style="float: right; color: #08c; margin-right: 50px;">删除</a>
+                </div>
+            </section>
+            <h1 class="content-subhead update-form"> </h1>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="id-sent-message" class="panel">
+        <div class="header">
+            <span class="col_fade">发送的消息</span>
+        </div>
+
+        <div class="inner">
+            {% if not send %}
+            <p>没有消息</p>
+            {% endif %}
+            {% for s in send %}
+            <section class="message" data-id="${s.id}">
+                <header class="message-header">
+                    <p class="message-meta">
+                        接收方 ·
+                        <a href="javascript:void(0);" class="message-receiver" style="color: #08c;">{{s.receiver}}</a>
+                    </p>
+                </header>
+                <div class="message-description">
+                    <p class="message-content">{{s.content}}</p>
+                    {% if s.link !='' %}
+                    <p class="message-content">链接: <a href="{{ s.link }}">{{ s.link }}</a></p>
+                    {% endif %}
+                </div>
+                <div>
+                    <span>{{s.created_time | format_time }}</span>
+                    <a href="{{ url_for('message.delete', messages_id=s.id, user='sender_del') }}" style="float: right; color: #08c; margin-right: 50px;">删除</a>
+                </div>
+            </section>
+            <h1 class="content-subhead update-form"> </h1>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

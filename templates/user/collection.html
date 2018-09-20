@@ -1,0 +1,51 @@
+{% extends "topic/base.html" %}
+{% block title %}话题收藏{% endblock%}
+
+{% block content %}
+<div id="content">
+    <div class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="/">主页</a><span class="divider">/</span></li>
+                <li class="active">{{ view_user.username }}收藏的话题</li>
+            </ul>
+        </div>
+
+        <div class="inner no-padding">
+            <div id="topic_list">
+                {% for c in collection %}
+                {% set author = c.user() %}
+                <div class="cell">
+                    <a class="user_avatar pull-left" href="{{ url_for('user.user_detail', username=author.username) }}">
+                        <img src="{{ author.image }}" title="{{ author.username }}">
+                    </a>
+                    <span class="reply_count pull-left">
+                        <span class="count_of_replies" title="回复数">
+                          {{ c.reply_count() }}
+                        </span>
+                        <span class="count_seperator">/</span>
+                        <span class="count_of_visits" title="点击数">
+                          {{ c.views }}
+                        </span>
+                    </span>
+
+
+                    <a class="last_time pull-right" href="javacript:void(0);">
+                        <span class="last_active_time">{{ c.active_time | from_now }}</span>
+                    </a>
+
+
+                    <div class="topic_title_wrapper">
+                        <!--<span class="put_good"></span>-->
+                        <a class="topic_title" href="{{ url_for('topic.detail', topic_id=c.id) }}" title="JavaScript 资源大全中文版">
+                            {{ c.title }}
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

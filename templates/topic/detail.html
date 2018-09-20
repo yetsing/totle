@@ -1,0 +1,139 @@
+<!--topic/detail.html-->
+{% extends "topic/base.html" %}
+{% block title %}{{ topic.title }}{% endblock%}
+{% set author = topic.user() %}
+{% block content %}
+<div id="content">
+    <div class='panel'>
+        <div class='header topic_header'>
+        <span class="topic_full_title">
+            {{ topic.title }}
+        </span>
+            <div class="changes">
+                <span>
+                    发布于 {{ topic.created_time | from_now }}
+                </span>
+                <span>
+                    作者
+                    <a href="{{ url_for('user.user_detail', username=author.username) }}">
+                    {{ author.username }}
+                    </a>
+                </span>
+                <span>
+                    {{ topic.views }} 次浏览
+                </span>
+                {% if topic.updated_time != 0 %}
+                <span>
+                    最后一次编辑是 {{ topic.updated_time | from_now }}
+                </span>
+                {% endif %}
+                <span>
+                    来自 {{ board.title }}
+                </span>
+                {% if user != author and user %}
+                {% if collect %}
+                <input class="span-common pull-right collect_btn" type="submit" value="取消收藏" data-id="{{ topic.id }}">
+                {% else %}
+                <input class="span-common span-success pull-right collect_btn" type="submit" value="收藏"
+                       data-id="{{ topic.id }}">
+                {% endif %}
+                {% endif %}
+            </div>
+            {% if user == author %}
+            <div id="manage_topic">
+                <a href="{{ url_for('topic.edit', id=topic.id, token=token) }}">
+                    <img src="/static/images/edit.png" alt="编辑">
+                </a>
+                <a href="{{ url_for('topic.delete', id=topic.id, token=token) }}" class="delete_topic_btn">
+                    <img src="/static/images/delete-button.png" alt="删除">
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class='inner topic'>
+            <div class='topic_content'>
+                <div class="markdown-text">{{ topic.content}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class='panel'>
+        <div class='header'>
+            <span class='col_fade'>
+                <!-- 过滤器 -->
+                {{ topic.replies() | count }} 回复
+            </span>
+        </div>
+        <div class="reply_list">
+            {% for r in topic.replies() %}
+            {% set reply_author = r.user() %}
+            <div class='cell reply_area reply_item' id="id-reply-{{ r.id }}" data-id="{{ r.id }}">
+                <div class='author_content'>
+                    <a href="{{ url_for('user.user_detail', username=reply_author.username) }}" class="user_avatar">
+                        <img src="{{ reply_author.image }}" title="{{ reply_author.username }}">
+                    </a>
+                    <div class='user_info'>
+                        <a class='dark reply_author'>
+                            {{ reply_author.username }}
+                        </a>
+                        <a class="reply_time">
+                            {{ loop.index }}楼 / {{ loop.length }}楼 •
+                            <span class="reply-time" id="{{ r.created_time }}"></span>
+                        </a>
+                    </div>
+                    {% if user %}
+                    <div class='user_action'>
+                        {% if user == reply_author %}
+                        <a class="reply_delete" href="{{ url_for('reply.delete', id=r.id, token=token) }}" style="font-size: xx-small">删除</a>
+                        {% endif %}
+                        <a class="reply_input" href="javascript: void(0)" style="font-size: xx-small">回复</a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class='reply_content from-leiwei1991'>
+                    <div class="markdown-text">{{ r.content }}</div>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <div class="header">
+            <span class="col_fade">添加回复</span>
+        </div>
+        <div class="inner reply">
+            <form id="reply_form"
+                  action="{{ url_for('reply.add', token=token, link=url_for('topic.detail', topic_id=topic.id, _external=True)) }}"
+                  method="post">
+
+                <div class="markdown_editor in_editor">
+                    <div class="markdown_in_editor">
+                        <textarea class="editor" name="content" rows="8"></textarea>
+
+                        <div class="editor_buttons">
+                            <input class="span-primary submit_btn" type="submit" value="回复">
+                        </div>
+                    </div>
+
+                </div>
+                <input type="hidden" name="topic_id" id="topic_id" value="{{ topic.id }}">
+                <input type="hidden" name="_link" id="_link" value="{{ url_for('topic.detail', topic_id=topic.id, _external=True) }}">
+                <input type="hidden" name="_csrf" id="_csrf" value="{{token}}">
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/css/style.css">
+<script src="https://cdn.bootcss.com/marked/0.3.19/marked.min.js"></script>
+<script src="https://cdn.bootcss.com/prism/1.13.0/prism.js"></script>
+<script src="https://cdn.bootcss.com/prism/1.13.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="/static/js/collect.js"></script>
+<script src="/static/js/topic.js"></script>
+<script src="/static/js/reply.js"></script>
+
+{% endblock %}

@@ -1,0 +1,157 @@
+<!--topic/base.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!--<link rel="stylesheet" href="/static/css/profile-min.css">-->
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- navbar -->
+<div class='navbar'>
+    <div class='navbar-inner'>
+        <div class='container'>
+            <ul class='nav pull-right'>
+                <li><a href="{{ url_for('topic.index') }}">首页</a></li>
+
+                {% if user %}
+                <li><a href="/message/" target="">消息</a></li>
+                <li><a href="{{ url_for('user.edit') }}" target="">设置</a></li>
+                <li><a href="{{ url_for('user.logout') }}" target="">退出</a></li>
+                {% else %}
+                <li><a href="{{ url_for('user.register_view') }}">注册</a></li>
+                <li><a href="{{ url_for('user.login_view') }}">登录</a></li>
+                {% endif %}
+
+            </ul>
+            <a class="btn btn-navbar" id="responsive-sidebar-trigger">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+        </div>
+    </div>
+</div>
+<div id="main">
+    <div id="sidebar">
+        <div class="panel">
+            {% if view_user %}
+            <div class="header">
+                <span class="col_fade">个人信息</span>
+            </div>
+            <div class="inner">
+                <div class="user_card">
+                    <div>
+                        <a class="user_avatar" href="{{ url_for('user.user_detail', username=view_user.username) }}">
+                            <img src="{{ view_user.image }}" title="{{ view_user.username }}">
+                        </a>
+                        <span class="user_name">
+                            <a class="dark" href="{{ url_for('user.user_detail', username=view_user.username) }}">{{ view_user.username }}</a>
+                        </span>
+                        <div class="space clearfix"></div>
+                        <span class="signature">
+                            “
+                            {{ view_user.signature }}
+                            ”
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% elif author %}
+            <div class="header">
+                <span class="col_fade">作者</span>
+            </div>
+            <div class="inner">
+                <div class="user_card">
+                    <div>
+                        <a class="user_avatar" href="{{ url_for('user.user_detail', username=author.username) }}">
+                            <img src="{{ author.image }}" title="{{ author.username }}">
+                        </a>
+                        <span class="user_name">
+                            <a class="dark" href="{{ url_for('user.user_detail', username=author.username) }}">{{ author.username }}</a>
+                        </span>
+                        <div class="space clearfix"></div>
+                        <span class="signature">
+                            “
+                            {{ author.signature }}
+                            ”
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% elif user %}
+            <div class="header">
+                <span class="col_fade">个人信息</span>
+            </div>
+            <div class="inner">
+                <div class="user_card">
+                    <div>
+                        <a class="user_avatar" href="{{ url_for('user.user_detail', username=user.username) }}">
+                            <img src="{{ user.image }}" title="{{ user.username }}">
+                        </a>
+                        <span class="user_name">
+                            <a class="dark" href="{{ url_for('user.user_detail', username=user.username) }}">{{ user.username }}</a>
+                        </span>
+                        <div class="space clearfix"></div>
+                        <span class="signature">
+                            “
+                            {{ user.signature }}
+                            ”
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="header">
+                <span class="col_fade">欢迎来到 club</span>
+            </div>
+            <div class="inner">
+                <div>
+                    您可以
+                    <a href="/club/login/view">登录</a>
+                    或
+                    <a href="/club/register/view">注册</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="panel">
+            <div class="inner">
+                {% if not bid %}{% set bid = 1 %}{% endif %}
+                <a href="/topic/new?board_id={{ bid }}" class="create_topic_btn">
+                    <span class="span-success">发布话题</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% block content %}
+    {% endblock %}
+
+</div>
+<div id="footer">
+    <div id="footer_main">
+        <div class="links">
+            <span class="dark">个人网站</span>
+            <span class="dark">欢迎交流学习</span>
+            <a href="https://github.com/yetsing/persional-club" target="_blank">
+                源码地址
+            </a>
+        </div>
+
+        <div class="col_fade">
+
+            <p>使用
+                <a href="http://flask.pocoo.org/" target="_blank" class="sponsor_outlink">
+                    Flask
+                </a>
+                搭建
+            </p>
+        </div>
+    </div>
+</div>
+
+</body>
