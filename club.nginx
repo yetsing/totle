@@ -9,7 +9,15 @@ server {
         alias /var/www/club/static;
     }
 
-    location / {
+    location /club {
         proxy_pass http://localhost:2000;
+    }
+
+    location /weibo {
+        proxy_pass http://localhost:3000;
+    }
+
+    location /chat_room {
+        proxy_pass http://localhost:5000;
     }
 }
