@@ -37,6 +37,8 @@ rm -f /etc/nginx/sites-available/default
 
 # 建立一个软连接
 cp /var/www/club/club.conf /etc/supervisor/conf.d/club.conf
+cp /var/www/weibo/weibo.conf /etc/supervisor/conf.d/weibo.conf
+cp /var/www/chatroom/chatroom.conf /etc/supervisor/conf.d/chatroom.conf
 # 不要在 sites-available 里面放任何东西
 cp /var/www/club/club.nginx /etc/nginx/sites-enabled/club
 chmod -R o+rwx /var/www/club
