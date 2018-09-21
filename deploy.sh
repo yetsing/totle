@@ -48,8 +48,6 @@ cd /var/www/club
 python3.6 reset.py
 cd /var/www/weibo
 python3.6 reset.py
-cd /var/www/chat_room
-python3.6 reset.py
 
 # 重启服务器
 service supervisor restart
