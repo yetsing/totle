@@ -2,7 +2,7 @@ var insertReplyInput = function(replyCell, token, link, replyId, topicId) {
     var replyAuthor = e('.reply_author', replyCell)
     var author = replyAuthor.innerText
     var inputItem = `
-    <form id="reply_form" action="/reply/add?link=${link}&id=${replyId}&token=${token}" method="post">
+    <form id="reply_form" action="/club/reply/add?link=${link}&id=${replyId}&token=${token}" method="post">
 
         <div class="markdown_editor in_editor">
             <div class="markdown_in_editor">
