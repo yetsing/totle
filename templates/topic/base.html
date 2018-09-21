@@ -19,7 +19,7 @@
                 <li><a href="{{ url_for('topic.index') }}">首页</a></li>
 
                 {% if user %}
-                <li><a href="/message/" target="">消息</a></li>
+                <li><a href="{{ url_for('message.index')}}" target="">消息</a></li>
                 <li><a href="{{ url_for('user.edit') }}" target="">设置</a></li>
                 <li><a href="{{ url_for('user.logout') }}" target="">退出</a></li>
                 {% else %}
@@ -122,7 +122,7 @@
         <div class="panel">
             <div class="inner">
                 {% if not bid %}{% set bid = 1 %}{% endif %}
-                <a href="/topic/new?board_id={{ bid }}" class="create_topic_btn">
+                <a href="{{ url_for('topic.new', board_id=bid) }}" class="create_topic_btn">
                     <span class="span-success">发布话题</span>
                 </a>
             </div>

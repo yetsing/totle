@@ -7,12 +7,12 @@
     <div class="panel">
         <div class="header">
             {% if bid == -1 %}
-            <a href="/topic"
+            <a href="{{ url_for('topic.index') }}"
                class="topic-tab current-tab">
                 全部的帖子
             </a>
             {% else %}
-            <a href="/topic"
+            <a href="{{ url_for('topic.index') }}"
                class="topic-tab">
                 全部的帖子
             </a>
@@ -21,12 +21,12 @@
 
             {% for b in bs %}
             {% if b.id == bid %}
-            <a href="/topic?board_id={{ b.id }}"
+            <a href="{{ url_for('topic.index', board_id=b.id) }}"
                class="topic-tab current-tab">
                 {{ b.title }}
             </a>
             {% else %}
-            <a href="/topic?board_id={{ b.id }}"
+            <a href="{{ url_for('topic.index', board_id=b.id) }}"
                class="topic-tab">
                 {{ b.title }}
             </a>

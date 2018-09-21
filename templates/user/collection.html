@@ -6,7 +6,7 @@
     <div class="panel">
         <div class="header">
             <ul class="breadcrumb">
-                <li><a href="/">主页</a><span class="divider">/</span></li>
+                <li><a href="{{ url_for('topic.index') }}">主页</a><span class="divider">/</span></li>
                 <li class="active">{{ view_user.username }}收藏的话题</li>
             </ul>
         </div>

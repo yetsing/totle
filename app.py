@@ -32,10 +32,10 @@ def register_routes(app):
 
     app.register_blueprint(index_routes)
     app.register_blueprint(user_routes, url_prefix='/club')
-    app.register_blueprint(topic_routes, url_prefix='/topic')
-    app.register_blueprint(reply_routes, url_prefix='/reply')
-    app.register_blueprint(board_routes, url_prefix='/board')
-    app.register_blueprint(mail_routes, url_prefix='/message')
+    app.register_blueprint(topic_routes, url_prefix='/club/topic')
+    app.register_blueprint(reply_routes, url_prefix='/club/reply')
+    app.register_blueprint(board_routes, url_prefix='/club/board')
+    app.register_blueprint(mail_routes, url_prefix='/club/message')
 
     app.template_filter()(format_time)
     app.template_filter()(from_now)
