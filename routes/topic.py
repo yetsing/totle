@@ -69,7 +69,7 @@ def add():
     form = request.form.to_dict()
     u = current_user()
     Topic.add(form, user_id=u.id)
-    return redirect(url_for('.index'))
+    return redirect(url_for('.detail', topic_id=t.id))
 
 
 @main.route("/delete")
