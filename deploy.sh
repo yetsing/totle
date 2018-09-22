@@ -1,10 +1,10 @@
 set -ex
 
 # 换源
-cp /var/www/club/misc/sources.list /etc/apt/sources.list
-mkdir -p /root/.pip
-cp /var/www/club/misc/pip.conf /root/.pip/pip.conf
-apt-get update
+# cp /var/www/club/misc/sources.list /etc/apt/sources.list
+# mkdir -p /root/.pip
+# cp /var/www/club/misc/pip.conf /root/.pip/pip.conf
+# apt-get update
 
 # 系统设置
 apt-get -y install  zsh curl ufw
