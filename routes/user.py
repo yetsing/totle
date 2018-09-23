@@ -76,12 +76,13 @@ def created_topic(user_id):
 
 def replied_topic(user_id):
     rs = Reply.all(user_id=user_id)
-    ts = set()
+    ts = []
+    visited = set()
     for r in rs:
         t = Topic.one(id=r.topic_id)
-        if t is not None:
-            ts.add(t)
-    ts = list(ts)
+        if t.id not in visited:
+            visited.add(t.id)
+            ts.append(t)
     sort_by_time(ts)
     return ts
 

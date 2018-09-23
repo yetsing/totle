@@ -15,6 +15,7 @@ from models.token import Token
 from models.user import User
 from models.topic import Topic
 from utils import log
+from cache import cache
 
 
 def current_user():
@@ -59,9 +60,8 @@ def csrf_required(f):
     def wrapper(*args, **kwargs):
         token = request.args['token']
         u = current_user()
-        t = Token.one(token=token, user_id=u.id)
-        if t is not None:
-            Token.delete(id=t.id)
+        if cache.exists(token) and u.id == int(cache.get(token)):
+            cache.delete(token)
             return f(*args, **kwargs)
         else:
             abort(401)
@@ -72,12 +72,8 @@ def csrf_required(f):
 def new_csrf_token():
     u = current_user()
     token = str(uuid.uuid4())
-    form = dict(
-        token=token,
-    )
     if u is not None:
-        form['user_id'] = u.id
-        Token.new(form)
+        cache.set(token, u.id)
     g.token = token
 
 
