@@ -87,7 +87,7 @@ def format_time(unix_timestamp):
 # 将时间转化成距今的时间间隔
 def from_now(timestamp):
     time_interval = int(time.time()) - timestamp
-    second = time_interval
+    second = time_interval + 1
     minute = second / 60
     hour = minute / 60
     day = hour / 24
