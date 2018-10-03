@@ -31,8 +31,9 @@ class SQLMixin(object):
         return m
 
     @classmethod
-    def update(cls, m_id, **kwargs):
-        m = cls.query.filter_by(id=m_id).first()
+    def update(cls, m, **kwargs):
+        if isinstance(m, int):
+            m = cls.query.filter_by(id=m).first()
         for name, value in kwargs.items():
             setattr(m, name, value)
 

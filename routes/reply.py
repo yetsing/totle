@@ -1,6 +1,7 @@
 import time
 
 from flask import (
+    g,
     request,
     url_for,
     redirect,
@@ -13,10 +14,11 @@ from models.reply import Reply
 from models.user import User
 
 from routes import (
-    current_user,
     csrf_required,
     login_required,
+    same_user_required,
 )
+from utils import log
 
 main = Blueprint('reply', __name__)
 
@@ -56,9 +58,10 @@ def send_messages(sender, receivers, reply_link, reply_content):
 @csrf_required
 def add():
     form = request.form.to_dict()
-    u = current_user()
+    u = g.current_user
     # 回复链接
     link = request.args.get('link')
+    log('11111111')
 
     content = form['content']
     users = users_from_content(content)
@@ -73,7 +76,8 @@ def add():
 @main.route('/delete')
 @login_required
 @csrf_required
+@same_user_required(Reply)
 def delete():
-    reply_id = int(request.args.get('id'))
-    r = Reply.delete(id=reply_id)
+    r = g.object
+    Reply.delete(r)
     return redirect(url_for('topic.detail', topic_id=r.topic_id))

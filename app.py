@@ -3,7 +3,13 @@ from flask import Flask
 import secret
 from models.base_model import db
 
-from routes import from_now, format_time, new_csrf_token
+from routes import (
+    from_now,
+    format_time,
+    current_user,
+    new_csrf_token
+)
+
 from routes.index import main as index_routes
 from routes.user import main as user_routes
 from routes.topic import main as topic_routes
@@ -28,6 +34,7 @@ def configured_app():
 
 
 def register_routes(app):
+    app.before_request(current_user)
     app.before_request(new_csrf_token)
 
     app.register_blueprint(index_routes)

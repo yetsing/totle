@@ -30,12 +30,11 @@ class Topic(SQLMixin, db.Model):
         return m
 
     @classmethod
-    def delete(cls, topic_id):
-        t = cls.one(id=topic_id)
-        replies = t.replies()
+    def delete(cls, topic):
+        replies = topic.replies()
         for r in replies:
             db.session.delete(r)
-        db.session.delete(t)
+        db.session.delete(topic)
         db.session.commit()
 
     def user(self):

@@ -4,14 +4,14 @@ from functools import wraps
 
 from flask import (
     g,
+    abort,
+    flash,
     url_for,
     session,
     request,
-    abort,
     redirect,
-    flash)
+)
 
-from models.token import Token
 from models.user import User
 from models.topic import Topic
 from utils import log
@@ -20,14 +20,13 @@ from cache import cache
 
 def current_user():
     uid = session.get('user_id', '')
-    u = User.one(id=uid)
-    return u
+    g.current_user = User.one(id=uid)
 
 
 def login_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
-        u = current_user()
+        u = g.current_user
         if u is None:
             flash('请登录')
             return redirect(url_for('user.login_view'))
@@ -37,29 +36,31 @@ def login_required(f):
     return decorator
 
 
-def same_user_required(f):
-    @wraps(f)
-    def decorator(*args, **kwargs):
-        u = current_user()
-        data = dict(
-            GET=request.args,
-            POST=request.form,
-        )
-        topic_id = int(data[request.method]['id'])
-        t = Topic.one(id=topic_id)
-        if u.id == t.user_id:
-            return f(*args, *kwargs)
-        else:
-            abort(401)
+def same_user_required(cls):
+    def before_function(f):
+        @wraps(f)
+        def decorator(*args, **kwargs):
+            u = g.current_user
+            data = dict(
+                GET=request.args,
+                POST=request.form,
+            )
+            mid = int(data[request.method]['id'])
+            g.object = cls.one(id=mid)
+            if u.id == g.object.user_id:
+                return f(*args, *kwargs)
+            else:
+                abort(401)
 
-    return decorator
+        return decorator
+    return before_function
 
 
 def csrf_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         token = request.args['token']
-        u = current_user()
+        u = g.current_user
         if cache.exists(token) and u.id == int(cache.get(token)):
             cache.delete(token)
             return f(*args, **kwargs)
@@ -70,10 +71,10 @@ def csrf_required(f):
 
 
 def new_csrf_token():
-    u = current_user()
+    u = g.current_user
     token = str(uuid.uuid4())
     if u is not None:
-        cache.set(token, u.id)
+        cache.set(token, u.id, ex=3600)
     g.token = token
 
 

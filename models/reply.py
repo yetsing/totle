@@ -20,4 +20,9 @@ class Reply(SQLMixin, db.Model):
         m = Reply.new(form)
         return m
 
+    @classmethod
+    def delete(cls, reply):
+        db.session.delete(reply)
+        db.session.commit()
+
 

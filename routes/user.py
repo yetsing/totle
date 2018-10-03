@@ -3,6 +3,7 @@ import time
 import uuid
 
 from flask import (
+    g,
     flash,
     abort,
     jsonify,
@@ -19,10 +20,10 @@ from models.reply import Reply
 from models.topic import Topic
 from models.user import User
 from routes import (
-    current_user,
     sort_by_time,
     login_required,
 )
+from utils import log
 
 main = Blueprint('user', __name__)
 
@@ -89,14 +90,13 @@ def replied_topic(user_id):
 
 @main.route('/user/<username>')
 def user_detail(username):
-    u = current_user()
+    u = g.current_user
     view_user = User.one(username=username)
     if view_user is None:
         abort(404)
     else:
         created = created_topic(view_user.id)
         replied = replied_topic(view_user.id)
-        print('replied', replied)
         return render_template(
             'user/profile.html',
             user=u,
@@ -108,14 +108,14 @@ def user_detail(username):
 
 @main.route('/user/setting')
 def edit():
-    u = current_user()
+    u = g.current_user
     result = request.args.get('result', '')
     return render_template('user/setting.html', user=u, result=result)
 
 
 @main.route('/user/update', methods=['POST'])
 def update_setting():
-    u = current_user()
+    u = g.current_user
     form = request.form.to_dict()
     form['updated_time'] = int(time.time())
     User.update(u.id, **form)
@@ -125,7 +125,7 @@ def update_setting():
 
 @main.route('/user/update/password', methods=['POST'])
 def update_password():
-    u = current_user()
+    u = g.current_user
     form = request.form.to_dict()
     success = User.change_password(u.id, form)
     if success:
@@ -146,7 +146,7 @@ def avatar_add():
     path = os.path.join('images', filename)
     file.save(path)
 
-    u = current_user()
+    u = g.current_user
     User.update(u.id, image='/images/{}'.format(filename))
     flash('头像更改成功')
 
@@ -165,7 +165,7 @@ def collected_topic(user_id):
 
 @main.route('/user/<username>/collection')
 def collection_index(username):
-    u = current_user()
+    u = g.current_user
     view_user = User.one(username=username)
     ts = collected_topic(view_user.id)
     return render_template(
@@ -179,7 +179,7 @@ def collection_index(username):
 @main.route('/collect/<int:topic_id>')
 @login_required
 def collect(topic_id):
-    u = current_user()
+    u = g.current_user
     u.collect(topic_id)
     d = dict(
         status='success',
@@ -189,7 +189,7 @@ def collect(topic_id):
 
 @main.route('/del_collect/<int:topic_id>')
 def del_collect(topic_id):
-    u = current_user()
+    u = g.current_user
     u.del_collect(topic_id)
     d = dict(
         status='success',

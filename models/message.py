@@ -12,8 +12,10 @@ class Messages(SQLMixin, db.Model):
     link = Column(String(50), default='')
 
     @classmethod
-    def delete_one(cls, m_id, user_del):
+    def delete_one(cls, m_id, user_del, u):
         m = Messages.one(id=m_id)
+        if u.username not in [m.receiver, m.sender]:
+            return
         setattr(m, user_del, True)
         if m.sender_del and m.receiver_del:
             db.session.delete(m)

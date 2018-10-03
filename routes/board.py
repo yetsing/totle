@@ -1,4 +1,5 @@
 from flask import (
+    g,
     abort,
     url_for,
     request,
@@ -7,17 +8,14 @@ from flask import (
     render_template,
 )
 
-from routes import current_user
-
 from models.board import Board
-
 
 main = Blueprint('board', __name__)
 
 
 @main.route("/admin")
 def index():
-    u = current_user()
+    u = g.current_user
     if u.is_admin():
         bs = Board.all()
         return render_template(
@@ -32,7 +30,5 @@ def index():
 @main.route("/add", methods=["POST"])
 def add():
     form = request.form
-    u = current_user()
-    m = Board.new(form)
+    Board.new(form)
     return redirect(url_for('topic.index'))
-

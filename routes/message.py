@@ -1,14 +1,15 @@
 from flask_mail import Message, Mail
 from flask import (
-    render_template,
+    g,
+    flash,
+    url_for,
     request,
     redirect,
-    url_for,
     Blueprint,
-    flash
+    render_template,
 )
 
-from routes import current_user, login_required
+from routes import login_required
 
 from models.message import Messages
 from models.user import User
@@ -27,7 +28,7 @@ def add():
     if r is None:
         flash('请您输入正确的用户名')
         return redirect(url_for('.index'))
-    u = current_user()
+    u = g.current_user
     form['sender'] = u.username
     m = Messages.new(form)
     content = form['content'] + '<a>{}</a>'.format(m.link)
@@ -48,7 +49,7 @@ def add():
 @main.route('/')
 @login_required
 def index():
-    u = current_user()
+    u = g.current_user
 
     sent_message = Messages.all(sender=u.username, sender_del=False)
     received_message = Messages.all(receiver=u.username, receiver_del=False)
@@ -67,6 +68,7 @@ def index():
 @main.route('/view/<int:messages_id>')
 @login_required
 def delete(messages_id):
-    user = request.args.get('user', '')
-    Messages.delete_one(messages_id, user)
+    u = g.current_user
+    user_del = request.args.get('user', '')
+    Messages.delete_one(messages_id, user_del, u)
     return redirect(url_for('.index'))
