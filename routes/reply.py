@@ -54,7 +54,7 @@ def send_messages(sender, receivers, reply_link, reply_content):
         Messages.new(form)
 
 
-main.route("/add", methods=["POST"])
+@main.route("/add", methods=["POST"])
 @login_required
 @csrf_required
 def add():
