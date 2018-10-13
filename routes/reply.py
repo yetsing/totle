@@ -62,6 +62,7 @@ def add():
     # 回复链接
     link = request.args.get('link')
     log('11111111')
+    link = link.replace('localhost:2000', 'http://134.175.187.236')
 
     content = form['content']
     users = users_from_content(content)
