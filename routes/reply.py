@@ -61,9 +61,7 @@ def add():
     form = request.form.to_dict()
     u = g.current_user
     can_reply = is_action_allowed(u.id, 'reply', period=60, max_count=10)
-    alert = 'alert(您当前操作次数过多，请稍后重试)'
     if can_reply:
-        alert = ''
         # 回复链接
         link = request.args.get('link')
         link = link.replace('localhost:2000', '134.175.187.236')
@@ -75,7 +73,7 @@ def add():
         send_messages(u, users, link, content)
 
         Topic.update(r.topic_id, active_time=time.time())
-    return redirect(url_for('topic.detail', topic_id=form['topic_id'], alert=alert))
+    return redirect(url_for('topic.detail', topic_id=form['topic_id']))
 
 
 @main.route('/delete')
