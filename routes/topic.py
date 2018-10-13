@@ -32,6 +32,7 @@ def index():
 
 @main.route('/<int:topic_id>')
 def detail(topic_id):
+    a = request.args.get('alert')
     u = g.current_user
     t = Topic.get(topic_id)
     b = Board.one(id=t.board_id)
@@ -43,6 +44,7 @@ def detail(topic_id):
         board=b,
         token=g.token,
         collect=collect,
+        alert=a,
     )
 
 
