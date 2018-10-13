@@ -18,6 +18,7 @@ from routes import (
     login_required,
     same_user_required,
 )
+from routes.helper import is_action_allowed
 from utils import log
 
 main = Blueprint('reply', __name__)
@@ -59,19 +60,20 @@ def send_messages(sender, receivers, reply_link, reply_content):
 def add():
     form = request.form.to_dict()
     u = g.current_user
-    # 回复链接
-    link = request.args.get('link')
-    log('11111111')
-    link = link.replace('localhost:2000', '134.175.187.236')
+    can_reply = is_action_allowed(u.id, 'reply', period=60, max_count=10)
+    if can_reply:
+        # 回复链接
+        link = request.args.get('link')
+        link = link.replace('localhost:2000', '134.175.187.236')
 
-    content = form['content']
-    users = users_from_content(content)
-    r = Reply.add(form, user_id=u.id)
-    link += '#id-reply-{}'.format(r.id)
-    send_messages(u, users, link, content)
+        content = form['content']
+        users = users_from_content(content)
+        r = Reply.add(form, user_id=u.id)
+        link += '#id-reply-{}'.format(r.id)
+        send_messages(u, users, link, content)
 
-    Topic.update(r.topic_id, active_time=time.time())
-    return redirect(url_for('topic.detail', topic_id=r.topic_id))
+        Topic.update(r.topic_id, active_time=time.time())
+    return redirect(url_for('topic.detail', topic_id=form['topic_id']))
 
 
 @main.route('/delete')
