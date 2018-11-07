@@ -6,6 +6,7 @@ from flask import (
     url_for,
     redirect,
     Blueprint,
+    render_template,
 )
 
 from models.message import Messages
@@ -73,7 +74,14 @@ def add():
         send_messages(u, users, link, content)
 
         Topic.update(r.topic_id, active_time=time.time())
-    return redirect(url_for('topic.detail', topic_id=form['topic_id']))
+        return redirect(url_for('topic.detail', topic_id=form['topic_id']))
+    else:
+        link = url_for('topic.detail', topic_id=form['topic_id'])
+        return render_template(
+            'warn.html',
+            user=u,
+            link=link,
+        )
 
 
 @main.route('/delete')

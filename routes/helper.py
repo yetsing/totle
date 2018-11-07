@@ -13,4 +13,3 @@ def is_action_allowed(user_id, action_key, period, max_count):
         pipe.expire(key, period + 1)
         _, _, current_count, _ = pipe.execute()
     return current_count <= max_count
-

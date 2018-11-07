@@ -7,6 +7,7 @@ from routes import *
 
 from models.topic import Topic
 from models.board import Board
+from routes.helper import is_action_allowed
 
 main = Blueprint('topic', __name__)
 
@@ -67,8 +68,17 @@ def new():
 def add():
     form = request.form.to_dict()
     u = g.current_user
-    t = Topic.add(form, user_id=u.id)
-    return redirect(url_for('.detail', topic_id=t.id))
+    can_add_topic = is_action_allowed(u.id, 'add_topic', period=60, max_count=1)
+    if can_add_topic:
+        t = Topic.add(form, user_id=u.id)
+        return redirect(url_for('.detail', topic_id=t.id))
+    else:
+        link = url_for('topic.index')
+        return render_template(
+            'warn.html',
+            user=u,
+            link=link,
+        )
 
 
 @main.route("/delete")

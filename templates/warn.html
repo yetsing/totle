@@ -1,0 +1,22 @@
+{% extends "topic/base.html" %}
+{% block title %}警告{% endblock%}
+
+{% block content %}
+<div id="content">
+    <div class="panel">
+        <div class="header">
+            <ul class="breadcrumb">
+                <li><a href="{{ url_for('topic.index') }}">主页</a><span class="divider">/</span></li>
+            </ul>
+        </div>
+        <div class="inner">
+            <div class="alert alert-success">
+                <strong>您当前操作次数过多，请稍后重试</strong>
+            </div>
+            <div>返回点击<a href="{{ link }}">这里</a></div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
