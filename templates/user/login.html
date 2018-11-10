@@ -35,10 +35,12 @@
                 </div>
                 {% if captcha_id != -1 %}
                 <div class="control-group">
-                    <label class="control-label" for="name">验证码</label>
+                    <label class="control-label" for="name" style="margin-top: 14px;">验证码</label>
 
                     <div class="controls">
-                        <input class="input-xlarge readonly" id="captcha" name="captcha" size="30" type="password">
+                        <input class="input-xlarge readonly" id="captcha"
+                               name="captcha" size="30" type="password"
+                               style="width: 100px;">
                         <input class="captcha-id" name="captcha_id" size="30" value="{{ captcha_id }}" style="display: none;">
                         <img class="captcha" src="{{ url_for('user.get_captcha', id=captcha_id) }}" data-id="{{ captcha_id }}">
                     </div>
