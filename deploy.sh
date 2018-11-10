@@ -29,7 +29,7 @@ apt-get install -y postfix
 
 apt-get install -y git supervisor nginx python3.6 redis-server
 python3.6 /var/www/club/get-pip.py
-pip3 install jinja2 flask gevent gunicorn pymysql flask_sqlalchemy flask_mail redis forgerypy eventlet flask-socketio
+pip3 install jinja2 flask gevent gunicorn pymysql flask_sqlalchemy flask_mail redis forgerypy eventlet flask-socketio captcha
 
 # 删掉 nginx default 设置
 rm -f /etc/nginx/sites-enabled/default

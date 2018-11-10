@@ -41,7 +41,6 @@ class User(SQLMixin, db.Model):
             username=form['username'],
             password=User.salted_password(form['password']),
         )
-        print('validate_login', form, query)
         return User.one(**query)
 
     @classmethod

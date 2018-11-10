@@ -11,6 +11,7 @@ server {
 
     location /club {
         proxy_pass http://localhost:2000;
+        proxy_set_header X-Real-IP $remote_addr;
     }
 
     location /weibo {

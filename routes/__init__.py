@@ -13,9 +13,7 @@ from flask import (
 )
 
 from models.user import User
-from models.topic import Topic
-from utils import log
-from cache import cache
+from cache import cache as client
 
 
 def current_user():
@@ -61,8 +59,8 @@ def csrf_required(f):
     def wrapper(*args, **kwargs):
         token = request.args['token']
         u = g.current_user
-        if cache.exists(token) and u.id == int(cache.get(token)):
-            cache.delete(token)
+        if client.exists(token) and u.id == int(client.get(token)):
+            client.delete(token)
             return f(*args, **kwargs)
         else:
             abort(401)
@@ -74,7 +72,7 @@ def new_csrf_token():
     u = g.current_user
     token = str(uuid.uuid4())
     if u is not None:
-        cache.set(token, u.id, ex=3600)
+        client.set(token, u.id, ex=3600)
     g.token = token
 
 
@@ -116,3 +114,28 @@ def sort_by_time(ms):
             ms[j + 1] = ms[j]
             j -= 1
         ms[j + 1] = temp
+
+
+# 判断客户端上次是否登录失败
+def last_login_failed():
+    ip = request.headers["X-Real-IP"]
+    return client.exists(ip)
+
+
+def captcha_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if last_login_failed():
+            form = request.form
+            captcha = form.get('captcha', '')
+            captcha_id = form.get('captcha_id', '')
+            key = 'captcha_id_{}'.format(captcha_id)
+            if client.exists(key) and captcha.lower() == client.get(key).decode():
+                return f(*args, **kwargs)
+            else:
+                flash('验证码错误')
+                return redirect(url_for('.login_view'))
+        else:
+            return f(*args, **kwargs)
+
+    return wrapper

@@ -13,6 +13,7 @@ from flask import (
     redirect,
     Blueprint,
     render_template,
+    send_from_directory,
 )
 
 from models.collection import Collection
@@ -22,8 +23,12 @@ from models.user import User
 from routes import (
     sort_by_time,
     login_required,
+    captcha_required,
+    last_login_failed,
 )
-from utils import log
+from cache import cache as client
+from routes.helper import create_captcha_image
+
 
 main = Blueprint('user', __name__)
 
@@ -47,20 +52,39 @@ def register():
 
 @main.route('/login/view')
 def login_view():
-    return render_template('user/login.html')
+    captcha_id = -1
+    if last_login_failed():
+        captcha_id = client.incr('captcha_id', 1000)
+    return render_template(
+        'user/login.html',
+        captcha_id=captcha_id,
+    )
 
 
 @main.route("/login", methods=['POST'])
+@captcha_required
 def login():
     form = request.form
     u = User.validate_login(form)
     if u is None:
+        ip = request.headers["X-Real-IP"]
+        client.set(ip, 'fail', ex=7200)
         flash('登录失败，用户名或密码错误')
         return redirect(url_for('.login_view'))
     else:
         session['user_id'] = u.id
         session.permanent = True
         return redirect(url_for('topic.index'))
+
+
+@main.route('/login/captcha')
+def get_captcha():
+    captcha_id = request.args['id']
+    captcha = create_captcha_image(captcha_id)
+    key = 'captcha_id_{}'.format(captcha_id)
+    client.set(key, captcha, ex=3600)
+    filename = 'captcha_{}.png'.format(captcha_id)
+    return send_from_directory('captcha', filename)
 
 
 @main.route('/logout')
